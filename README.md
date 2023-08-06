@@ -11,7 +11,7 @@ cargo build --release
 
 Deployment:
 ```bash
-./target/release/host-ctf
+./target/release/host_ctf
 ```
 
 By default the server will start on 0.0.0.0 interface and port 3000.
