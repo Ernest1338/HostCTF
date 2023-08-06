@@ -1,0 +1,82 @@
+[
+    {
+        "name":"🕸️ Website Hacking",
+        "challenges":[
+            {
+                "id":0,
+                "name":"Web challange 1",
+                "description":"Description 1",
+                "hint":"Hint 1",
+                "points":100,
+                "flag":"flag{chal}"
+            },
+            {
+                "id":1,
+                "name":"Web challange 2",
+                "description":"Description 2",
+                "points":200,
+                "flag":"flag{chal}"
+            }
+        ]
+    },
+    {
+        "name":"⏪ Reverse Engineering",
+        "challenges":[
+            {
+                "id":2,
+                "name":"Rev challenge 1",
+                "description":"Description 1",
+                "hint":"Hint 1",
+                "points":200,
+                "flag":"flag{chal}"
+            },
+            {
+                "id":3,
+                "name":"Rev challenge 2",
+                "description":"Description 2",
+                "points":300,
+                "flag":"flag{chal}"
+            }
+        ]
+    },
+    {
+        "name":"🔎 Forensics",
+        "challenges":[
+            {
+                "id":4,
+                "name":"Forensics challenge 1",
+                "description":"Description 1",
+                "hint":"Hint 1",
+                "points":100,
+                "flag":"flag{chal}"
+            },
+            {
+                "id":5,
+                "name":"Forensics challenge 2",
+                "description":"Description 2",
+                "points":200,
+                "flag":"flag{chal}"
+            }
+        ]
+    },
+    {
+        "name":"💻 General Skills",
+        "challenges":[
+            {
+                "id":6,
+                "name":"General Skills challenge 1",
+                "description":"Description 1",
+                "hint":"Hint 1",
+                "points":200,
+                "flag":"flag{chal}"
+            },
+            {
+                "id":7,
+                "name":"General Skills challenge 2",
+                "description":"Description 2",
+                "points":300,
+                "flag":"flag{chal}"
+            }
+        ]
+    }
+]

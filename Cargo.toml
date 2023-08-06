@@ -1,0 +1,16 @@
+[package]
+name = "host_ctf"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1.0.178", default-features = false, features = ["derive"] }
+serde_json = { version = "1.0.104", default-features = false }
+axum = { version = "0.6.19", default-features = false, features = ["http1", "json", "tokio", "form"] }
+tower = { version = "0.4.13", default-features = false }
+blake3 = { version = "1.4.1", default-features = false }
+tower-http = { version = "0.4.3", default-features = false, features = ["fs"] }
+tokio = { version = "1.29.1", default-features = false, features = ["macros", "rt-multi-thread"] }
+sailfish = { version = "0.8.0", default-features = false, features = ["derive"] }

@@ -1,0 +1,21 @@
+<article>
+    <h2 style="text-align: center;">Scoreboard</h2>
+</article>
+<table style="display: revert; width: 100%;">
+    <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Score</th>
+        </tr>
+    </thead>
+    <tbody>
+    <% for (i, user) in users.iter().enumerate() { %>
+        <tr>
+            <td><%= i + 1 %></td>
+            <td><%= user.username %></td>
+            <td><%= user.score %></td>
+        </tr>
+    <% } %>
+    </tbody>
+</table>

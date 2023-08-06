@@ -1,0 +1,29 @@
+<article>
+    <h2 style="text-align: center;">Challenges</h2>
+</article>
+<% for chal_cat in challenges { %>
+    <h3><%= chal_cat.name %></h3>
+    <% for chal in &chal_cat.challenges { %>
+        <% if solves.contains(&chal.id) { %>
+        <details style="background-color:#1d4d1d;">
+        <% } else { %>
+        <details>
+        <% } %>
+            <summary><%= chal.name %> - <em style="color:var(--accent);"><%= chal.points %></em></summary>
+            <p>
+                <%= chal.description %>
+                <% if chal.hint.is_some() { %>
+                <details>
+                    <summary>Hint</summary>
+                    <p><%= chal.hint.as_ref().unwrap() %></p>
+                </details>
+                <% } %>
+            </p>
+            <form action="/flag_submit" method="POST">
+                <input type="hidden" name="challenge_id" value="<%= chal.id %>">
+                <input type="text" name="flag" placeholder="flag{...}">
+                <input type="submit" name="submit" value="Submit">
+            </form>
+        </details>
+    <% } %>
+<% } %>
