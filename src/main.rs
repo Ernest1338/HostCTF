@@ -1,6 +1,6 @@
 use axum::{
     body::{boxed, Body, BoxBody},
-    extract::{Form, State},
+    extract::{ConnectInfo, Form, State},
     http::{header::SET_COOKIE, HeaderMap, Request, Response, StatusCode, Uri},
     middleware::{from_fn, Next},
     response::{Html, IntoResponse},
@@ -16,6 +16,7 @@ use std::{
     error::Error,
     fs::read_to_string,
     io::Write,
+    net::SocketAddr,
     path::Path,
     sync::{Arc, Mutex, OnceLock},
     time::{SystemTime, UNIX_EPOCH},
@@ -187,10 +188,15 @@ fn get_timestamp() -> String {
     )
 }
 
-async fn log_requests(req: Request<Body>, next: Next<Body>) -> impl IntoResponse {
+async fn log_requests(
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    req: Request<Body>,
+    next: Next<Body>,
+) -> impl IntoResponse {
     println!(
-        "{GRAY}[{}] {RESET}Request: {GREEN}{} {BLUE}{}{RESET}",
+        "{GRAY}[{}] {RESET}[{}]: {GREEN}{} {BLUE}{}{RESET}",
         get_timestamp(),
+        addr.ip(),
         req.method(),
         req.uri()
     );
@@ -858,7 +864,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     initialize_scoreboard_cache(&database.lock().unwrap().db.set);
 
     axum::Server::bind(&bind_addr.parse()?)
-        .serve(app.into_make_service())
+        .serve(app.into_make_service_with_connect_info::<SocketAddr>())
         .await?;
 
     Ok(())
