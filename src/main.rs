@@ -33,7 +33,7 @@ const AUTH_SECRET: &str = "CHANGE_ME!";
 const ENABLE_STDOUT_EVENT_LOGS: bool = true;
 static CHALLENGES: OnceLock<Vec<ChallengeCategory>> = OnceLock::new();
 static TEMPLATE_CACHE: OnceLock<HashMap<&str, String>> = OnceLock::new();
-static SCOREBOARD_CACHE: OnceLock<Mutex<String>> = OnceLock::new();
+static SCOREBOARD_CACHE: Mutex<String> = Mutex::new(String::new());
 
 const RED: &str = "\x1b[31m";
 const GREEN: &str = "\x1b[32m";
@@ -45,17 +45,10 @@ const RESET: &str = "\x1b[00m";
 fn initialize_scoreboard_cache(users: &BTreeSet<User>) {
     println!("Initializing scoreboard cache");
     if users.is_empty() {
-        SCOREBOARD_CACHE
-            .set(Mutex::new(String::from(
-                "<article><h2 style=\"text-align: center;\">No users yet!</h2></article>",
-            )))
-            .unwrap();
+        *SCOREBOARD_CACHE.lock().unwrap() =
+            String::from("<article><h2 style=\"text-align: center;\">No users yet!</h2></article>");
     } else {
-        SCOREBOARD_CACHE
-            .set(Mutex::new(
-                ScoreboardTemplate { users }.render_once().unwrap(),
-            ))
-            .unwrap();
+        *SCOREBOARD_CACHE.lock().unwrap() = ScoreboardTemplate { users }.render_once().unwrap();
     }
 }
 
@@ -261,7 +254,7 @@ async fn scoreboard(headers: HeaderMap) -> Html<String> {
         BaseTemplate {
             head: "",
             navbar: get_navbar(headers.get("cookie").is_some()),
-            body: &SCOREBOARD_CACHE.get().unwrap().lock().unwrap(),
+            body: &SCOREBOARD_CACHE.lock().unwrap(),
         }
         .render_once()
         .unwrap(),
@@ -809,7 +802,7 @@ impl DB {
             .open(&self.filename)?;
         fh.write_all(serialized.as_bytes())?;
         // update scoreboard cache
-        *SCOREBOARD_CACHE.get().unwrap().lock().unwrap() = ScoreboardTemplate {
+        *SCOREBOARD_CACHE.lock().unwrap() = ScoreboardTemplate {
             users: &self.db.set,
         }
         .render_once()
