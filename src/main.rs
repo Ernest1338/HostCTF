@@ -79,7 +79,6 @@ fn initialize_challenges() -> Result<(), Box<dyn Error>> {
 #[derive(TemplateOnce)]
 #[template(path = "../templates/base.html", escape = false)]
 struct BaseTemplate<'a> {
-    head: &'a str,
     navbar: &'a str,
     body: &'a str,
 }
@@ -208,7 +207,6 @@ fn get_navbar(logged: bool) -> &'static str {
 async fn root(headers: HeaderMap) -> Html<String> {
     Html(
         BaseTemplate {
-            head: "",
             navbar: get_navbar(headers.get("cookie").is_some()),
             body: &TEMPLATE_CACHE.get().unwrap()["/"],
         }
@@ -234,7 +232,6 @@ async fn challenges(State(state): State<Arc<AppState>>, headers: HeaderMap) -> H
     }
     Html(
         BaseTemplate {
-            head: "",
             navbar: get_navbar(headers.get("cookie").is_some()),
             body: &ChallengesTemplate {
                 challenges: CHALLENGES.get().unwrap(),
@@ -252,7 +249,6 @@ async fn scoreboard(headers: HeaderMap) -> Html<String> {
     // TODO: paging? this would speedup this endpoint when lots of users (100 per page)
     Html(
         BaseTemplate {
-            head: "",
             navbar: get_navbar(headers.get("cookie").is_some()),
             body: &SCOREBOARD_CACHE.lock().unwrap(),
         }
@@ -264,7 +260,6 @@ async fn scoreboard(headers: HeaderMap) -> Html<String> {
 async fn register(headers: HeaderMap) -> Html<String> {
     Html(
         BaseTemplate {
-            head: "",
             navbar: get_navbar(headers.get("cookie").is_some()),
             body: &TEMPLATE_CACHE.get().unwrap()["/register"],
         }
@@ -379,7 +374,6 @@ async fn register_post(
 
     Html(
         BaseTemplate {
-            head: "",
             navbar: get_navbar(headers.get("cookie").is_some()),
             body: &body,
         }
@@ -391,7 +385,6 @@ async fn register_post(
 async fn login(headers: HeaderMap) -> Html<String> {
     Html(
         BaseTemplate {
-            head: "",
             navbar: get_navbar(headers.get("cookie").is_some()),
             body: &TEMPLATE_CACHE.get().unwrap()["/login"],
         }
@@ -475,7 +468,6 @@ async fn login_post(
         out_headers,
         Html(
             BaseTemplate {
-                head: "",
                 navbar: get_navbar(success),
                 body: &body,
             }
@@ -491,7 +483,6 @@ async fn profile(State(state): State<Arc<AppState>>, headers: HeaderMap) -> Html
     // TODO: render solved challenges and scoreboard position
     Html(
         BaseTemplate {
-            head: "",
             navbar: get_navbar(headers.get("cookie").is_some()),
             body: &ProfileTemplate {
                 user: state.database.lock().unwrap().get(username).unwrap(),
@@ -563,7 +554,6 @@ async fn flag_submit(
         );
         return Html(
             BaseTemplate {
-                head: "",
                 navbar: get_navbar(headers.get("cookie").is_some()),
                 body: &body,
             }
@@ -660,7 +650,6 @@ async fn flag_submit(
     );
     Html(
         BaseTemplate {
-            head: "",
             navbar: get_navbar(headers.get("cookie").is_some()),
             body: &body,
         }
@@ -686,7 +675,6 @@ async fn logout(headers: HeaderMap) -> impl IntoResponse {
         out_headers,
         Html(
             BaseTemplate {
-                head: "",
                 navbar: get_navbar(false),
                 body: &body,
             }
