@@ -462,7 +462,11 @@ async fn login_post(
         out_headers.append(SET_COOKIE, format!("auth_key={auth_key};").parse().unwrap());
     }
 
-    body.push_str(&TEMPLATE_CACHE.get().unwrap()["/"]);
+    if success {
+        body.push_str(&TEMPLATE_CACHE.get().unwrap()["/"]);
+    } else {
+        body.push_str(&TEMPLATE_CACHE.get().unwrap()["/login"]);
+    }
 
     (
         out_headers,
