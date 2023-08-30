@@ -31,10 +31,10 @@
 	}
 </script>
 
+<Infobox />
 <article>
 	<h2 style="text-align: center;">Profile</h2>
 </article>
-<Infobox />
 {#if isLogged}
 	<article style="background-color: var(--base);">
 		<h2 style="text-align: center;">{username}</h2>
