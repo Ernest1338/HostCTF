@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
 	import { writable } from 'svelte/store';
+    import { fade } from 'svelte/transition';
 
 	let timeoutId: ReturnType<typeof setTimeout>;
 
@@ -23,9 +24,11 @@
 	}
 </script>
 
-<article id="alert-box" hidden={!$alertStore.show} class={`alert ${$alertStore.type}`}>
-	<p>{$alertStore.message}</p>
-</article>
+{#if $alertStore.show}
+    <article id="alert-box" class={`alert ${$alertStore.type}`} transition:fade>
+        <p>{$alertStore.message}</p>
+    </article>
+{/if}
 
 <style>
 	.alert {
