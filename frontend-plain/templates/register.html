@@ -1,0 +1,24 @@
+<h1>Register</h1><br>
+<form>
+    <label for="username">Username</label>
+    <input type="text" id="username" placeholder="Username" class="field"><br>
+
+    <label for="email">E-Mail</label>
+    <input type="email" id="email" placeholder="example@mail.com" class="field"><br>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="Password" class="field"><br>
+
+    <label for="confirm_password">Confirm password</label>
+    <input type="password" id="confirm_password" placeholder="Password" class="field"><br>
+
+    <input type="button" value="Submit" id="submit" onclick="register();">
+</form>
+<script>
+    document.addEventListener('keypress', event => {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById('submit').click();
+        }
+    });
+</script>

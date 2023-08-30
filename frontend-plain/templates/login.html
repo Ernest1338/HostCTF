@@ -1,0 +1,18 @@
+<h1>Login</h1><br>
+<form>
+    <label for="username">Username</label>
+    <input type="text" id="username" placeholder="Username" required><br>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="Password" required><br>
+
+    <input type="button" value="Submit" id="submit" onclick="login();">
+</form>
+<script>
+    document.addEventListener('keypress', event => {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById('submit').click();
+        }
+    });
+</script>
