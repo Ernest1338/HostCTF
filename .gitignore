@@ -1,1 +1,4 @@
 database.db
+node_modules
+.svelte-kit
+bun.lockb
