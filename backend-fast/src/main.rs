@@ -25,6 +25,7 @@ use tower_http::cors::{Any, CorsLayer};
 // TODO: show solved chals in /challenges, /profile (maybe /scoreboard)
 // TODO: use rust-argon2 instead of blake3 for password hashing (AUTH_SECRET as salt?)
 // TODO: dynamic scoring system
+// TODO: change_pass, ?admin panel?, your position on the scoreboard page (above the table)
 // TODO: hostctf frontend render "your position"
 //       (backend should return an array with two things: 1.logged_user_stats 2.all_users_or_first_X_users)
 

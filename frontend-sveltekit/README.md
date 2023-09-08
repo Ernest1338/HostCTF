@@ -17,4 +17,8 @@ To create a production version:
 npm run build
 ```
 
+## TODO
+
+- [ ] View Transitions (https://svelte.dev/blog/view-transitions)
+
 You can preview the production build with `npm run preview`.
