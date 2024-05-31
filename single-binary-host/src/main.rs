@@ -13,6 +13,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     cmp::Ordering,
     collections::{BTreeSet, HashMap},
+    env::var,
     error::Error,
     fs::read_to_string,
     io::Write,
@@ -618,7 +619,7 @@ async fn flag_submit(
     // check authentication
     if success {
         let pass_hash = &conn.get(username).unwrap().password;
-        let expected_auth_key = hash((AUTH_SECRET.to_owned() + &pass_hash).as_bytes()).to_string();
+        let expected_auth_key = hash((AUTH_SECRET.to_owned() + pass_hash).as_bytes()).to_string();
         if expected_auth_key != auth_key {
             log_stdout(format!(
                 "Flag submit {RED}failed{RESET} with: Authentication failed: {submition:?} [username: {username}]"
@@ -790,6 +791,7 @@ impl DB {
         let serialized = serde_json::to_string(&self.db)?;
         let mut fh = std::fs::OpenOptions::new()
             .create(true)
+            .truncate(true)
             .write(true)
             .open(&self.filename)?;
         fh.write_all(serialized.as_bytes())?;
@@ -809,7 +811,9 @@ impl DB {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let bind_addr = "0.0.0.0:3000";
+    let host = var("HOST").unwrap_or_else(|_| "0.0.0.0".to_string());
+    let port = var("PORT").unwrap_or_else(|_| "3000".to_string());
+    let bind_addr = format!("{host}:{port}");
 
     let database = Arc::new(Mutex::new(DB::new("./database.db")));
 
