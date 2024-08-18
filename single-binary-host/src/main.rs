@@ -151,10 +151,6 @@ async fn get_static_file(uri: Uri) -> Result<Response<BoxBody>, (StatusCode, Str
     let req = Request::builder().uri(uri).body(Body::empty()).unwrap();
     match ServeDir::new("./static").oneshot(req).await {
         Ok(res) => Ok(res.map(boxed)),
-        Err(err) => Err((
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Something went wrong: {err}"),
-        )),
     }
 }
 
@@ -205,10 +201,20 @@ fn get_navbar(logged: bool) -> &'static str {
     }
 }
 
+fn is_user_loggedin(headers: &HeaderMap) -> bool {
+    let cookie = match headers.get("cookie") {
+        Some(val) => val,
+        None => return false,
+    };
+    let cookies = parse_cookie(cookie.to_str().unwrap());
+    let username = get_cookie_value(&cookies, "username");
+    username.is_some()
+}
+
 async fn root(headers: HeaderMap) -> Html<String> {
     Html(
         BaseTemplate {
-            navbar: get_navbar(headers.get("cookie").is_some()),
+            navbar: get_navbar(is_user_loggedin(&headers)),
             body: &TEMPLATE_CACHE.get().unwrap()["/"],
         }
         .render_once()
@@ -217,9 +223,8 @@ async fn root(headers: HeaderMap) -> Html<String> {
 }
 
 async fn challenges(State(state): State<Arc<AppState>>, headers: HeaderMap) -> Html<String> {
-    let cookie = headers.get("cookie");
     let mut solves = Vec::new();
-    if cookie.is_some() {
+    if is_user_loggedin(&headers) {
         let cookies = parse_cookie(headers.get("cookie").unwrap().to_str().unwrap());
         let username = get_cookie_value(&cookies, "username").unwrap();
         solves = state
@@ -233,7 +238,7 @@ async fn challenges(State(state): State<Arc<AppState>>, headers: HeaderMap) -> H
     }
     Html(
         BaseTemplate {
-            navbar: get_navbar(headers.get("cookie").is_some()),
+            navbar: get_navbar(is_user_loggedin(&headers)),
             body: &ChallengesTemplate {
                 challenges: CHALLENGES.get().unwrap(),
                 solves: &solves,
@@ -250,7 +255,7 @@ async fn scoreboard(headers: HeaderMap) -> Html<String> {
     // TODO: paging? this would speedup this endpoint when lots of users (100 per page)
     Html(
         BaseTemplate {
-            navbar: get_navbar(headers.get("cookie").is_some()),
+            navbar: get_navbar(is_user_loggedin(&headers)),
             body: &SCOREBOARD_CACHE.lock().unwrap(),
         }
         .render_once()
@@ -261,7 +266,7 @@ async fn scoreboard(headers: HeaderMap) -> Html<String> {
 async fn register(headers: HeaderMap) -> Html<String> {
     Html(
         BaseTemplate {
-            navbar: get_navbar(headers.get("cookie").is_some()),
+            navbar: get_navbar(is_user_loggedin(&headers)),
             body: &TEMPLATE_CACHE.get().unwrap()["/register"],
         }
         .render_once()
@@ -375,7 +380,7 @@ async fn register_post(
 
     Html(
         BaseTemplate {
-            navbar: get_navbar(headers.get("cookie").is_some()),
+            navbar: get_navbar(is_user_loggedin(&headers)),
             body: &body,
         }
         .render_once()
@@ -386,7 +391,7 @@ async fn register_post(
 async fn login(headers: HeaderMap) -> Html<String> {
     Html(
         BaseTemplate {
-            navbar: get_navbar(headers.get("cookie").is_some()),
+            navbar: get_navbar(is_user_loggedin(&headers)),
             body: &TEMPLATE_CACHE.get().unwrap()["/login"],
         }
         .render_once()
@@ -482,13 +487,16 @@ async fn login_post(
     )
 }
 
-async fn profile(State(state): State<Arc<AppState>>, headers: HeaderMap) -> Html<String> {
+async fn profile(State(state): State<Arc<AppState>>, headers: HeaderMap) -> impl IntoResponse {
+    if !is_user_loggedin(&headers) {
+        return Html("403: Not logged in".to_string());
+    }
     let cookies = parse_cookie(headers.get("cookie").unwrap().to_str().unwrap());
     let username = get_cookie_value(&cookies, "username").unwrap();
     // TODO: render solved challenges and scoreboard position
     Html(
         BaseTemplate {
-            navbar: get_navbar(headers.get("cookie").is_some()),
+            navbar: get_navbar(is_user_loggedin(&headers)),
             body: &ProfileTemplate {
                 user: state.database.lock().unwrap().get(username).unwrap(),
                 // challenges: &CHALLENGES.get().unwrap(),
@@ -559,7 +567,7 @@ async fn flag_submit(
         );
         return Html(
             BaseTemplate {
-                navbar: get_navbar(headers.get("cookie").is_some()),
+                navbar: get_navbar(is_user_loggedin(&headers)),
                 body: &body,
             }
             .render_once()
@@ -655,7 +663,7 @@ async fn flag_submit(
     );
     Html(
         BaseTemplate {
-            navbar: get_navbar(headers.get("cookie").is_some()),
+            navbar: get_navbar(is_user_loggedin(&headers)),
             body: &body,
         }
         .render_once()
